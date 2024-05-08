@@ -24,11 +24,11 @@ public class AnswerService {
 	private final AnswerRepository answerRepository;
 
 	public Page<Answer> getList(Question  question, int page){
-		List<Sort.Order> sorts = new ArrayList<>();
-		sorts.add(Sort.Order.desc("createDate"));
-		sorts.add(Sort.Order.desc("voter"));
-		Pageable pageable = PageRequest.of(page, 5);
-		return this.answerRepository.findByQuestion(question, pageable);
+			List<Sort.Order> sorts = new ArrayList<>();
+			sorts.add(Sort.Order.desc("createDate"));
+			sorts.add(Sort.Order.desc("voter"));
+			Pageable pageable = PageRequest.of(page, 5);
+			return this.answerRepository.findByQuestion(question.getId(), question, pageable);
 
 	}
 
