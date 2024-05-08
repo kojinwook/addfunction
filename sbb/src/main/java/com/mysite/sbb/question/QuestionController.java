@@ -2,6 +2,8 @@ package com.mysite.sbb.question;
 
 import java.security.Principal;
 
+import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.answer.AnswerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +33,7 @@ public class QuestionController {
 
 	private final QuestionService questionService;
 	private final UserService userService;
-
+	private final AnswerService answerService;
 	@GetMapping("/list")
 	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "kw", defaultValue = "") String kw) {
@@ -43,9 +45,12 @@ public class QuestionController {
 	}
 
 	@GetMapping(value = "/detail/{id}")
-	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
+	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+						 @RequestParam(value = "answerPage",defaultValue = "0")int answerPage) {
 		Question question = this.questionService.getQuestion(id);
+		Page<Answer> answerPaging = this.answerService.getList(question , answerPage);
 		model.addAttribute("question", question);
+		model.addAttribute("answerPaging",answerPaging);
 		return "question_detail";
 	}
 
