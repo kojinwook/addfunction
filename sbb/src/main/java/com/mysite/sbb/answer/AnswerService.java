@@ -23,13 +23,26 @@ public class AnswerService {
 
 	private final AnswerRepository answerRepository;
 
-	public Page<Answer> getList(Question  question, int page){
-			List<Sort.Order> sorts = new ArrayList<>();
-			sorts.add(Sort.Order.desc("createDate"));
-			sorts.add(Sort.Order.desc("voter"));
-			Pageable pageable = PageRequest.of(page, 5);
-			return this.answerRepository.findByQuestion(question.getId(), question, pageable);
+	public Pageable sortDate(int page){
+		List<Sort.Order> sorts = new ArrayList<>();
+		sorts.add(Sort.Order.desc("createDate")); //데이터 정렬
+		return PageRequest.of(page, 10, Sort.by(sorts));
+	}
 
+	public Pageable sortVote(int page){
+		//Query에서 정렬
+		return PageRequest.of(page, 10);
+	}
+
+	public Page<Answer> getList(Question question, int page, String sort){
+		Pageable pageable = null;
+		if (sort.equals("createDate")){
+			pageable = sortDate(page);
+			return answerRepository.findByQuestion(question, pageable); // 데이터 접근
+		} else {
+			pageable = sortVote(page);
+			return answerRepository.findByQuestion(question.getId(), pageable); // 쿼리 접근
+		}
 	}
 
 	public Answer create(Question question, String content, SiteUser author) {
